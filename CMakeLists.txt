@@ -20,7 +20,7 @@ include(KDECMakeSettings)
 include(ECMAddTests)
 
 
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Core DBus Test Widgets PrintSupport Svg)
+find_package(Qt5 CONFIG REQUIRED COMPONENTS Core DBus Test Widgets PrintSupport Svg TextToSpeech)
 find_package(KF5 REQUIRED COMPONENTS
     Activities
     Archive
@@ -255,7 +255,7 @@ set(okularpart_SRCS
    ui/toc.cpp
    ui/tocmodel.cpp
    ui/toolaction.cpp
-#   ui/tts.cpp
+   ui/tts.cpp
    ui/videowidget.cpp
 )
 
@@ -276,7 +276,7 @@ message("KF5: Enable ui/tts.cpp again")
 add_library(okularpart MODULE ${okularpart_SRCS})
 generate_export_header(okularpart BASE_NAME okularpart)
 
-target_link_libraries(okularpart okularcore Qt5::Svg KF5::Parts ${MATH_LIB} Phonon::phonon4qt5 KF5::Solid)
+target_link_libraries(okularpart okularcore Qt5::Svg Qt5::TextToSpeech KF5::Parts ${MATH_LIB} Phonon::phonon4qt5 KF5::Solid)
 
 install(TARGETS okularpart DESTINATION ${PLUGIN_INSTALL_DIR})
 

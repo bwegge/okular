@@ -70,7 +70,7 @@
 #include "pageviewannotator.h"
 #include "priorities.h"
 #include "toolaction.h"
-//#include "tts.h"
+#include "tts.h"
 #include "videowidget.h"
 #include "core/action.h"
 #include "core/area.h"
@@ -119,7 +119,7 @@ public:
     PageViewPrivate( PageView *qq );
 
     FormWidgetsController* formWidgetsController();
-//    OkularTTS* tts();
+    OkularTTS* tts();
     QString selectedText() const;
 
     // the document, pageviewItems and the 'visible cache'
@@ -175,7 +175,7 @@ public:
     PageViewMessage * messageWindow;    // in pageviewutils.h
     bool m_formsVisible;
     FormWidgetsController *formsWidgetController;
-//    OkularTTS * m_tts;
+    OkularTTS * m_tts;
     QTimer * refreshTimer;
     int refreshPage;
 
@@ -225,7 +225,7 @@ public:
 };
 
 PageViewPrivate::PageViewPrivate( PageView *qq )
-    : q( qq )
+    : q( qq ), m_tts( 0 )
 {
 }
 
@@ -243,22 +243,20 @@ FormWidgetsController* PageViewPrivate::formWidgetsController()
     return formsWidgetController;
 }
 
-//OkularTTS* PageViewPrivate::tts()
-//{
-//    if ( !m_tts )
-//    {
-//        m_tts = new OkularTTS( q );
-//        if ( aSpeakStop )
-//        {
-//            QObject::connect( m_tts, SIGNAL(hasSpeechs(bool)),
-//                              aSpeakStop, SLOT(setEnabled(bool)) );
-//            QObject::connect( m_tts, SIGNAL(errorMessage(QString)),
-//                              q, SLOT(errorMessage(QString)) );
-//        }
-//    }
+OkularTTS* PageViewPrivate::tts()
+{
+    if ( !m_tts )
+    {
+        m_tts = new OkularTTS( q );
+        if ( aSpeakStop )
+        {
+            QObject::connect( m_tts, SIGNAL(isSpeaking(bool)),
+                              aSpeakStop, SLOT(setEnabled(bool)) );
+        }
+    }
 
-//    return m_tts;
-//}
+    return m_tts;
+}
 
 
 /* PageView. What's in this file? -> quick overview.
@@ -4927,37 +4925,37 @@ void PageView::slotRefreshPage()
 
 void PageView::slotSpeakDocument()
 {
-//    QString text;
-//    QVector< PageViewItem * >::const_iterator it = d->items.constBegin(), itEnd = d->items.constEnd();
-//    for ( ; it < itEnd; ++it )
-//    {
-//        Okular::RegularAreaRect * area = textSelectionForItem( *it );
-//        text.append( (*it)->page()->text( area ) );
-//        text.append( '\n' );
-//        delete area;
-//    }
+    QString text;
+    QVector< PageViewItem * >::const_iterator it = d->items.constBegin(), itEnd = d->items.constEnd();
+    for ( ; it < itEnd; ++it )
+    {
+        Okular::RegularAreaRect * area = textSelectionForItem( *it );
+        text.append( (*it)->page()->text( area ) );
+        text.append( '\n' );
+        delete area;
+    }
 
-//    d->tts()->say( text );
+    d->tts()->say( text );
 }
 
 void PageView::slotSpeakCurrentPage()
 {
-//    const int currentPage = d->document->viewport().pageNumber;
+    const int currentPage = d->document->viewport().pageNumber;
 
-//    PageViewItem *item = d->items.at( currentPage );
-//    Okular::RegularAreaRect * area = textSelectionForItem( item );
-//    const QString text = item->page()->text( area );
-//    delete area;
+    PageViewItem *item = d->items.at( currentPage );
+    Okular::RegularAreaRect * area = textSelectionForItem( item );
+    const QString text = item->page()->text( area );
+    delete area;
 
-//    d->tts()->say( text );
+    d->tts()->say( text );
 }
 
 void PageView::slotStopSpeaks()
 {
-//    if ( !d->m_tts )
-//        return;
+    if ( !d->m_tts )
+        return;
 
-//    d->m_tts->stopAllSpeechs();
+    d->m_tts->stopAllSpeechs();
 }
 
 void PageView::slotAction( Okular::Action *action )
